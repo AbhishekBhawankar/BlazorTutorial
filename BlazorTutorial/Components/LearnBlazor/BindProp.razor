@@ -1,0 +1,33 @@
+﻿@page "/learnBlazor/bindprop"
+
+<h3>BindProp - Data Binding</h3>
+
+<p>
+	Name: @product.Name
+	<br />
+	Price: @product.Price
+	<br />
+	IsActive: @(product.IsActive ? "Active" : "InActive")
+	<br />
+</p>
+Input Price:
+<input type="number" @bind="@product.Price" @bind:event="oninput" />
+<br />
+
+Input Name:
+<input type="text" @bind="@product.Name" @bind:event="oninput" />
+<br />
+
+Check IsAvailable:
+<input type="checkbox" @bind="@product.IsActive" @bind:event="onchange" />
+<br />
+
+@code {
+	Models.Product product = new()
+	{
+		Id = 1,
+		Name = "Product 1",
+		Price = 0,
+		IsActive = true,
+	};
+}
