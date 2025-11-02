@@ -1,42 +1,37 @@
-name: Build and Deploy blazortutorial to IIS
+name: Build and Deploy Blazor App to IIS
 
 on:
   push:
-    branches:
-      - master
-      - main
- 
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      # Step 1: Checkout your code
-      - name: Checkout source code
-        uses: actions/checkout@v4
+    - name: Checkout source code
+      uses: actions/checkout@v4
 
-      # Step 2: Setup .NET SDK
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x  # change if using .NET 6 or 7
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
 
-      # Step 3: Restore dependencies
-      - name: Restore packages
-        run: dotnet restore
+    - name: Restore packages
+      run: dotnet restore
 
-      # Step 4: Build your project
-      - name: Build project
-        run: dotnet build --configuration Release
+    - name: Build project
+      run: dotnet build --configuration Release
 
-      # Step 5: Publish your Blazor app
-      - name: Publish for deployment
-        run: dotnet publish -c Release -o ./publish
+    - name: Publish Blazor App
+      run: dotnet publish -c Release -o ./publish
 
-      # Step 6: Upload published files as artifact (so you can download it)
-      - name: Upload publish files
-        uses: actions/upload-artifact@v4
-        with:
-          name: blazortutorial-publish
-          path: ./publish
+    # Deploy to IIS folder
+    - name: Deploy to IIS via PowerShell (SCP)
+      uses: appleboy/scp-action@master
+      with:
+        host: "127.0.0.1"                           # 🖥 Your PC IP (127.0.0.1 for localhost)
+        username: "abhis"                           # 👤 Your Windows username
+        password: "Pass@123$"    # 🔒 Replace locally, never push real password
+        source: "./publish/*"
+        target: "D:/DOT NET PROJECTS/BlazorTutorial/publish"
