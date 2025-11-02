@@ -1,0 +1,39 @@
+﻿name: Build and Deploy blazortutorial to IIS
+
+on:
+  push:
+    branches: [ "main" ]   # Runs this workflow when you push to main branch
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Checkout your code
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x  # change if using .NET 6 or 7
+
+      # Step 3: Restore dependencies
+      - name: Restore packages
+        run: dotnet restore
+
+      # Step 4: Build your project
+      - name: Build project
+        run: dotnet build --configuration Release
+
+      # Step 5: Publish your Blazor app
+      - name: Publish for deployment
+        run: dotnet publish -c Release -o ./publish
+
+      # Step 6: Upload published files as artifact (so you can download it)
+      - name: Upload publish files
+        uses: actions/upload-artifact@v4
+        with:
+          name: blazortutorial-publish
+          path: ./publish
