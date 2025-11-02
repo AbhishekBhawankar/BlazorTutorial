@@ -3,98 +3,133 @@
 
 <h3>Products List</h3>
 
-
 <div class="container">
-	<div class="row">
-		@foreach (var item in product)
-		{
-			<div class="col-md-3 mb-3">
-				<div class="card text-center">
-					<div class="card-body">
-						<h5 class="card-title">@item.Name</h5>
-						<label>Show Properties:</label>
-						<input type="checkbox" name="showProperties" @bind="@item.ShowProperties" />
-						<hr />
+    <div class="row">
+        @foreach (var item in product)
+        {
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <label>Show Properties:</label>
+                        <input type="checkbox" @bind="@item.ShowProperties" />
+                        <hr />
 
-						@if (@item.ShowProperties)
-						{
-							<p class="card-text">Price: @item.Price</p>
-							<p class="card-text">Color: @item.Color</p>
-							<p class="card-text">Status: @(item.IsActive ? "Active" : "Inactive")</p>
+                        @if (item.ShowProperties)
+                        {
+                            <p class="card-text">Price: @item.Price</p>
+                            <p class="card-text">Color: @item.Color</p>
+                            <p class="card-text">Status: @(item.IsActive ? "Active" : "Inactive")</p>
 
-							<button class="btn btn-warning" @onclick="() => EditProduct(item)">Edit</button>
-							<button class="btn btn-danger" @onclick="() => DeleteProduct(item.Id)">Delete</button>
-						}
+                            <button class="btn btn-warning me-2" @onclick="() => EditProduct(item)">Edit</button>
+                            <button class="btn btn-danger" @onclick="() => DeleteProduct(item.Id)">Delete</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
-					</div>
-				</div>
-			</div>
-		}
-	</div>
+    <div class="container mt-3">
+        <h5 class="mb-3">@((isEdit ? "Edit Product" : "Add Product"))</h5>
 
+        <div class="row align-items-center border p-3 rounded" style="border: 2px solid black;">
+            <div class="col-md-3 mb-2">
+                <input type="text" class="form-control" placeholder="Enter Product Name" @bind="@newProduct.Name" />
+            </div>
 
-	<div class="container mt-3">
-		<h5 class="mb-3">Add Product:</h5>
+            <div class="col-md-3 mb-2">
+                <input type="number" class="form-control" placeholder="Enter Price" @bind="@newProduct.Price" />
+            </div>
 
-		<div class="row align-items-center border p-3 rounded" style="border: 2px solid black;">
-			<div class="col-md-3 mb-2">
-				<input type="text" class="form-control" placeholder="Enter Product Name" @bind="@newProduct.Name" />
-			</div>
+            <div class="col-md-3 mb-2">
+                <input type="text" class="form-control" placeholder="Enter Color" @bind="@newProduct.Color" />
+            </div>
 
-			<div class="col-md-3 mb-2">
-				<input type="number" class="form-control" placeholder="Enter Price" @bind="@newProduct.Price" />
-			</div>
+            <div class="col-md-2 mb-2 d-flex align-items-center">
+                <input type="checkbox" class="form-check-input me-2" id="statusCheck" @bind="@newProduct.IsActive" />
+                <label for="statusCheck" class="form-check-label">Active</label>
+            </div>
 
-			<div class="col-md-3 mb-2">
-				<input type="text" class="form-control" placeholder="Enter Color" @bind=@newProduct.Color />
-			</div>
-
-			<div class="col-md-2 mb-2 d-flex align-items-center">
-				<input type="checkbox" class="form-check-input me-2" id="statusCheck" @bind=@newProduct.IsActive />
-				<label for="statusCheck" class="form-check-label">Active</label>
-
-			</div>
-
-			<div class="col-md-1 mb-2 d-flex align-items-center	">
-				<button type="submit" class="btn btn-success mx-3" @onclick="AddProduct">Add</button>
-			</div>
-		</div>
-	</div>
-
-
+            <div class="col-md-1 mb-2 d-flex align-items-center">
+                @if (isEdit)
+                {
+                    <button class="btn btn-primary mx-3" @onclick="UpdateProduct">Update</button>
+                }
+                else
+                {
+                    <button class="btn btn-success mx-3" @onclick="AddProduct">Add</button>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
+    Product newProduct = new();
+    private bool isEdit = false;
+    private int editId = 0;
 
-	Product newProduct = new();
-	private int next = 4;
-	private bool isEdit = false;
+    List<Product> product = new()
+    {
+        new() { Id=1, Name = "Car 1", Price=100000, Color="Black",  IsActive=true },
+        new() { Id=2, Name = "Car 2", Price=200000, Color="White",  IsActive=true },
+        new() { Id=3, Name = "Car 3", Price=300000, Color="Grey",   IsActive=true },
+        new() { Id=4, Name = "Car 4", Price=400000, Color="Silver", IsActive=true },
+    };
 
-	List<Product> product = new()
-	{
-		new() { Id=1, Name = "Car 1", Price=100000, Color="Black",  IsActive=true },
-		new() { Id=2, Name = "Car 2", Price=200000, Color="White",  IsActive=true },
-		new() { Id=3, Name = "Car 3", Price=300000, Color="Grey",   IsActive=true },
-		new() { Id=4, Name = "Car 4", Price=400000, Color="Silver", IsActive=true },
-	};
+    private void AddProduct()
+    {
+        // auto-generate next ID
+        newProduct.Id = product.Any() ? product.Max(p => p.Id) + 1 : 1;
+        product.Add(new Product
+        {
+            Id = newProduct.Id,
+            Name = newProduct.Name,
+            Price = newProduct.Price,
+            Color = newProduct.Color,
+            IsActive = newProduct.IsActive
+        });
+        newProduct = new();
+    }
 
-	private void AddProduct()
-	{
-		newProduct.Id++;
-		product.Add(newProduct);
-		newProduct = new();
-	}
+    private void EditProduct(Product p)
+    {
+        isEdit = true;
+        editId = p.Id;
 
+        // fill form with selected product’s data
+        newProduct = new Product
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Price = p.Price,
+            Color = p.Color,
+            IsActive = p.IsActive
+        };
+    }
 
-	private void EditProduct(Product p)
-	{
+    private void UpdateProduct()
+    {
+        var existing = product.FirstOrDefault(x => x.Id == editId);
+        if (existing != null)
+        {
+            existing.Name = newProduct.Name;
+            existing.Price = newProduct.Price;
+            existing.Color = newProduct.Color;
+            existing.IsActive = newProduct.IsActive;
+        }
 
-	}
+        // reset form
+        newProduct = new();
+        isEdit = false;
+        editId = 0;
+    }
 
-	private void DeleteProduct(int id)
-	{
-		var getProducts = product.FirstOrDefault(x => x.Id == id);
-		if (getProducts != null)
-			product.Remove(getProducts);
-	}
+    private void DeleteProduct(int id)
+    {
+        var getProduct = product.FirstOrDefault(x => x.Id == id);
+        if (getProduct != null)
+            product.Remove(getProduct);
+    }
 }
