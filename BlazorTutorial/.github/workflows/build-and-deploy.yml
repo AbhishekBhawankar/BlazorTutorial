@@ -2,7 +2,10 @@
 
 on:
   push:
-    branches: [ "master" ]   # Runs this workflow when you push to main branch
+    branches:
+      - master
+      - main
+
 
 jobs:
   build:
