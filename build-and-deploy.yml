@@ -1,4 +1,4 @@
-﻿name: Build and Deploy blazortutorial to IIS
+name: Build and Deploy blazortutorial to IIS
 
 on:
   push:
