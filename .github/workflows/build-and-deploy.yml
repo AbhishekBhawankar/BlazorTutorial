@@ -30,8 +30,8 @@ jobs:
     - name: Deploy to IIS via PowerShell (SCP)
       uses: appleboy/scp-action@master
       with:
-        host: "127.0.0.1"                           # 🖥 Your PC IP (127.0.0.1 for localhost)
-        username: "abhis"                           # 👤 Your Windows username
+        host: "192.168.0.104"                           # 🖥 Your PC IP (127.0.0.1 for localhost)
+        username: "deployuser"                           # 👤 Your Windows username
         password: "Pass@123$"    # 🔒 Replace locally, never push real password
         source: "./publish/*"
         target: "D:/DOT NET PROJECTS/BlazorTutorial/publish"
